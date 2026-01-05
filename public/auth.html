@@ -507,7 +507,7 @@
 
         localStorage.setItem('qrstudio_token', data.token);
         localStorage.setItem('qrstudio_user', JSON.stringify(data.user));
-        window.location.href = '/';
+        window.location.href = '/auth-success.html';
       } catch (err) {
         console.error(err);
         alert('Network error. Please try again.');
@@ -542,7 +542,7 @@
 
         localStorage.setItem('qrstudio_token', data.token);
         localStorage.setItem('qrstudio_user', JSON.stringify(data.user));
-        window.location.href = '/';
+        window.location.href = '/auth-success.html';
       } catch (err) {
         console.error(err);
         alert('Network error. Please try again.');
