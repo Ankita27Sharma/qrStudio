@@ -1,0 +1,28 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>QR Studio - Authenticating...</title>
+</head>
+<body>
+<script>
+  const params = new URLSearchParams(window.location.search);
+  const token = params.get('token');
+  const name = params.get('name');
+  const email = params.get('email');
+
+  if (token && email) {
+    localStorage.setItem('qrstudio_token', token);
+    localStorage.setItem(
+      'qrstudio_user',
+      JSON.stringify({ name: name || 'User', email })
+    );
+
+    // ⬇️ HOME = auth-success.html
+    window.location.replace('auth-success.html');
+  } else {
+    window.location.replace('auth.html');
+  }
+</script>
+</body>
+</html>

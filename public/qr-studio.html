@@ -1,0 +1,215 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>QR Studio - Create</title>
+  <style>
+    /* CSS RESET & VARS */
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Inter', system-ui, sans-serif; background: linear-gradient(135deg, #C9FFBF, #FFAFBD); min-height: 100vh; }
+    
+    /* TOP BAR */
+    .top-bar { background: white; padding: 16px 40px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+    .logo { font-size: 24px; font-weight: 700; color: #7B1235; cursor: pointer; }
+    .user-avatar { width: 40px; height: 40px; background: #FF6B9D; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; }
+
+    /* LAYOUT */
+    .main-container { display: flex; max-width: 1200px; margin: 40px auto; background: white; border-radius: 24px; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,0.1); min-height: 600px; }
+    
+    /* LEFT PANEL (FORM) */
+    .left-panel { flex: 1; padding: 40px; border-right: 1px solid #eee; }
+    
+    /* RIGHT PANEL (PREVIEW) */
+    .right-panel { flex: 1; background: #f9f9f9; display: flex; align-items: center; justify-content: center; padding: 40px; flex-direction: column; }
+
+    /* FORM ELEMENTS */
+    .form-group { margin-bottom: 20px; }
+    label { display: block; font-weight: 600; margin-bottom: 8px; color: #333; }
+    input[type="text"], input[type="number"], select { width: 100%; padding: 12px; border: 2px solid #eee; border-radius: 8px; font-size: 16px; outline: none; transition: 0.3s; }
+    input:focus, select:focus { border-color: #FF6B9D; }
+    
+    .row { display: flex; gap: 15px; }
+    .col { flex: 1; }
+
+    /* GENERATE BUTTON */
+    .btn-generate { width: 100%; padding: 16px; background: linear-gradient(135deg, #FF80A0, #FF4B72); color: white; border: none; border-radius: 12px; font-size: 16px; font-weight: bold; cursor: pointer; transition: transform 0.1s; }
+    .btn-generate:active { transform: scale(0.98); }
+
+    /* MODE SWITCHER */
+    .mode-switch { display: flex; gap: 10px; margin-bottom: 20px; }
+    .mode-opt { flex: 1; text-align: center; padding: 10px; border: 2px solid #eee; border-radius: 8px; cursor: pointer; font-weight: 600; }
+    .mode-opt.active { background: #FF6B9D; color: white; border-color: #FF6B9D; }
+
+    /* PREVIEW AREA */
+    #qrPreview { max-width: 300px; border: 8px solid white; box-shadow: 0 10px 30px rgba(0,0,0,0.15); border-radius: 12px; margin-bottom: 20px; display: none; }
+    .placeholder { color: #aaa; font-size: 18px; font-weight: 500; }
+    
+    .actions { display: none; gap: 10px; flex-direction: column; width: 100%; max-width: 300px; }
+    .btn-action { padding: 12px; border-radius: 8px; border: none; cursor: pointer; font-weight: 600; }
+    .btn-download { background: #333; color: white; }
+    .btn-dashboard { background: white; border: 2px solid #FF6B9D; color: #FF6B9D; }
+
+    @media (max-width: 800px) { .main-container { flex-direction: column; } .left-panel { border-right: none; border-bottom: 1px solid #eee; } }
+  </style>
+</head>
+<body>
+
+  <div class="top-bar">
+    <div class="logo" onclick="window.location.href='auth-success.html'">QR Studio</div>
+    <div class="user-avatar" id="userInitial">U</div>
+  </div>
+
+  <div class="main-container">
+    <div class="left-panel">
+      <h2 style="margin-bottom: 25px; color: #333;">Design your QR Code</h2>
+      
+      <form id="qrForm">
+        <div class="mode-switch">
+          <div class="mode-opt active" id="btnText" onclick="setMode('text')">🔗 Link / Text</div>
+          <div class="mode-opt" id="btnFile" onclick="setMode('file')">📁 Upload File</div>
+        </div>
+        <input type="hidden" name="mode" id="inputMode" value="text">
+
+        <div class="form-group" id="groupText">
+          <label>Website URL or Text</label>
+          <input type="text" id="content" placeholder="https://example.com" required>
+        </div>
+
+        <div class="form-group" id="groupFile" style="display:none;">
+          <label>Select File (PDF, Image, etc)</label>
+          <input type="file" id="fileInput">
+        </div>
+
+        <div class="row">
+          <div class="col">
+            <div class="form-group">
+              <label>Foreground</label>
+              <input type="color" id="color" value="#000000" style="height: 50px; padding: 5px;">
+            </div>
+          </div>
+          <div class="col">
+            <div class="form-group">
+              <label>Background</label>
+              <input type="color" id="bgcolor" value="#ffffff" style="height: 50px; padding: 5px;">
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Size (px)</label>
+          <input type="number" id="size" value="400" min="200" max="1000">
+        </div>
+
+        <button type="submit" class="btn-generate">Generate QR Code</button>
+      </form>
+    </div>
+
+    <div class="right-panel">
+      <div class="placeholder" id="placeholderText">Preview will appear here</div>
+      <img id="qrPreview" src="" alt="QR Preview">
+      
+      <div class="actions" id="actionButtons">
+        <button class="btn-action btn-download" id="downloadBtn">Download PNG</button>
+        <button class="btn-action btn-dashboard" onclick="window.location.href='auth-success.html'">Save & Go to Dashboard</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // 1. AUTH CHECK
+    const token = localStorage.getItem('qrstudio_token');
+    const userJson = localStorage.getItem('qrstudio_user');
+    
+    if(!token || !userJson) {
+      window.location.href = 'auth.html';
+    }
+
+    // Set Avatar
+    const user = JSON.parse(userJson);
+    document.getElementById('userInitial').innerText = user.name.charAt(0).toUpperCase();
+
+    // 2. UI LOGIC (Toggle between Link and File mode)
+    function setMode(mode) {
+      document.getElementById('inputMode').value = mode;
+      
+      if(mode === 'text') {
+        document.getElementById('groupText').style.display = 'block';
+        document.getElementById('groupFile').style.display = 'none';
+        document.getElementById('btnText').classList.add('active');
+        document.getElementById('btnFile').classList.remove('active');
+        document.getElementById('content').required = true;
+      } else {
+        document.getElementById('groupText').style.display = 'none';
+        document.getElementById('groupFile').style.display = 'block';
+        document.getElementById('btnText').classList.remove('active');
+        document.getElementById('btnFile').classList.add('active');
+        document.getElementById('content').required = false;
+      }
+    }
+
+    // 3. GENERATE LOGIC
+    const form = document.getElementById('qrForm');
+    const previewImg = document.getElementById('qrPreview');
+    const placeholder = document.getElementById('placeholderText');
+    const actions = document.getElementById('actionButtons');
+    const downloadBtn = document.getElementById('downloadBtn');
+
+    form.onsubmit = async (e) => {
+      e.preventDefault();
+      
+      // UI Loading State
+      placeholder.innerText = "Generating...";
+      previewImg.style.display = 'none';
+      actions.style.display = 'none';
+
+      const fd = new FormData();
+      const mode = document.getElementById('inputMode').value;
+      
+      fd.append('mode', mode);
+      fd.append('size', document.getElementById('size').value);
+      fd.append('color', document.getElementById('color').value);
+      fd.append('bgcolor', document.getElementById('bgcolor').value);
+
+      if(mode === 'file') {
+        const fi = document.getElementById('fileInput');
+        if(fi.files.length === 0) return alert("Please select a file");
+        fd.append('file', fi.files[0]);
+      } else {
+        fd.append('content', document.getElementById('content').value);
+      }
+
+      try {
+        const res = await fetch('/generate', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}` // IMPORTANT: This saves it to DB
+          },
+          body: fd
+        });
+
+        if(!res.ok) throw new Error("Failed to generate");
+
+        const data = await res.json();
+
+        // Update Preview
+        placeholder.style.display = 'none';
+        previewImg.src = data.pngDataUrl;
+        previewImg.style.display = 'block';
+        actions.style.display = 'flex';
+
+        // Setup Download Button
+        downloadBtn.onclick = () => {
+          const a = document.createElement('a');
+          a.href = data.pngDataUrl;
+          a.download = 'qr-code.png';
+          a.click();
+        };
+
+      } catch (err) {
+        placeholder.innerText = "Error occurred. Try again.";
+        console.error(err);
+      }
+    };
+  </script>
+</body>
+</html>

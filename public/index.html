@@ -1,0 +1,170 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>QR Studio - Create Beautiful QR Codes Instantly</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: white; overflow-x: hidden; }
+
+    .navbar { position: fixed; top: 0; left: 0; right: 0; background: white; padding: 20px 40px; display: flex; justify-content: space-between; align-items: center; z-index: 1000; box-shadow: 0 2px 20px rgba(0, 0, 0, 0.05); }
+    .logo { font-size: 28px; font-weight: 700; background: linear-gradient(135deg, #C9FFBF 0%, #FFAFBD 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .nav-links { display: flex; gap: 32px; align-items: center; }
+    .nav-links a { text-decoration: none; color: #495057; font-weight: 600; transition: color 0.3s ease; }
+    .nav-links a:hover { color: #FF6B9D; }
+    .btn-login, .btn-signup { padding: 10px 24px; border-radius: 10px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; }
+    .btn-login { border: 2px solid #FF6B9D; background: white; color: #FF6B9D; }
+    .btn-signup { border: none; background: linear-gradient(135deg, #C9FFBF 0%, #FFAFBD 100%); color: white; box-shadow: 0 4px 15px rgba(255, 175, 189, 0.4); }
+
+    .hero { padding: 140px 40px 100px; background: linear-gradient(135deg, #C9FFBF 0%, #FFAFBD 100%); }
+    .hero-content { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; }
+    .hero-text h1 { font-size: 56px; font-weight: 800; color: #f2709c; margin-bottom: 24px; }
+    .hero-text p { font-size: 20px; color: #f2709c; margin-bottom: 40px; }
+    .hero-buttons { display: flex; gap: 16px; }
+    .btn-primary { padding: 16px 40px; background: white; color: #FF6B9D; border: none; border-radius: 12px; font-weight: 700; cursor: pointer; box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15); }
+    .btn-secondary { padding: 16px 40px; background: rgba(255, 255, 255, 0.2); color: #f2709c; border: 2px solid #f2709c; border-radius: 12px; font-weight: 700; cursor: pointer; }
+
+    .qr-showcase { background: white; padding: 40px; border-radius: 24px; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2); animation: float 6s ease-in-out infinite; }
+    @keyframes float { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-20px); } }
+
+    .features { padding: 100px 40px; background: white; }
+    .features-container { max-width: 1200px; margin: 0 auto; }
+    .section-header { text-align: center; margin-bottom: 60px; }
+    .section-badge { display: inline-block; padding: 8px 20px; background: linear-gradient(135deg, #C9FFBF 0%, #FFAFBD 100%); color: #f2709c; border-radius: 20px; font-size: 14px; font-weight: 700; margin-bottom: 16px; }
+    .section-header h2 { font-size: 42px; font-weight: 800; color: #1a1a1a; margin-bottom: 16px; }
+    .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 40px; }
+    .feature-card { text-align: center; padding: 40px; background: #f8f9fa; border-radius: 20px; transition: all 0.3s ease; }
+    .feature-card:hover { transform: translateY(-10px); box-shadow: 0 20px 40px rgba(255, 175, 189, 0.2); }
+    .feature-icon { width: 80px; height: 80px; background: linear-gradient(135deg, #C9FFBF 0%, #FFAFBD 100%); border-radius: 20px; display: flex; align-items: center; justify-content: center; margin: 0 auto 24px; }
+
+    .stats { padding: 80px 40px; background: linear-gradient(135deg, #C9FFBF 0%, #FFAFBD 100%); }
+    .stats-container { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 40px; text-align: center; color: #f2709c; }
+    .stat-number { font-size: 48px; font-weight: 800; }
+
+    .cta { padding: 100px 40px; text-align: center; }
+    .cta-container { max-width: 800px; margin: 0 auto; background: linear-gradient(135deg, #C9FFBF 0%, #FFAFBD 100%); padding: 60px 40px; border-radius: 24px; }
+    .cta h2 { font-size: 42px; font-weight: 800; color: #f2709c; margin-bottom: 16px; }
+
+    .footer { background: #1a1a1a; color: white; padding: 60px 40px 30px; }
+    .footer-container { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 40px; }
+
+    @media (max-width: 968px) {
+      .hero-content, .footer-container { grid-template-columns: 1fr; }
+      .hero-text h1 { font-size: 36px; }
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <div class="logo">QR Studio</div>
+    <div class="nav-links">
+      <a href="#features">Features</a>
+      <a href="#pricing">Pricing</a>
+      <button class="btn-login" onclick="window.location.href='auth.html'">Log In</button>
+      <button class="btn-signup" onclick="window.location.href='auth.html'">Sign Up</button>
+    </div>
+  </nav>
+
+  <section class="hero">
+    <div class="hero-content">
+      <div class="hero-text">
+        <h1>Create Beautiful QR Codes in Seconds</h1>
+        <p>Design stunning, customizable QR codes with logos, colors, and templates. Track scans with powerful analytics.</p>
+        <div class="hero-buttons">
+          <button class="btn-primary" onclick="window.location.href='auth.html'">Get Started Free</button>
+          
+          <button class="btn-secondary" onclick="document.getElementById('videoModal').style.display='flex'; document.getElementById('demoVideo').play()">Watch Demo</button>
+        </div>
+      </div>
+      
+      <div class="qr-showcase">
+        <svg viewBox="0 0 200 200" style="width: 100%;">
+          <rect width="200" height="200" fill="#fff"/>
+          <path d="M10 10h30v30H10z M50 10h10v10h10v10H50z M80 10h10v10H80z M150 10h10v10h-10z M160 10h30v30h-30z" fill="#000"/>
+        </svg>
+      </div>
+    </div>
+  </section>
+
+  <section class="features" id="features">
+    <div class="features-container">
+      <div class="section-header">
+        <span class="section-badge">Features</span>
+        <h2>Everything You Need</h2>
+      </div>
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon">📱</div>
+          <h3>Custom Templates</h3>
+          <p>Pre-designed templates for Instagram, WhatsApp, LinkedIn</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">📊</div>
+          <h3>Analytics</h3>
+          <p>Track scans, locations, and device types</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🎨</div>
+          <h3>Custom Branding</h3>
+          <p>Add logos, choose colors for branded QR codes</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="stats">
+    <div class="stats-container">
+      <div><div class="stat-number">10K+</div><div>QR Codes Created</div></div>
+      <div><div class="stat-number">50K+</div><div>Total Scans</div></div>
+      <div><div class="stat-number">5K+</div><div>Happy Users</div></div>
+      <div><div class="stat-number">99%</div><div>Uptime</div></div>
+    </div>
+  </section>
+
+  <section class="cta">
+    <div class="cta-container">
+      <h2>Ready to Get Started?</h2>
+      <p style="color: #f2709c; font-size: 18px; margin-bottom: 32px;">Join thousands creating stunning QR codes</p>
+      <button class="btn-primary" onclick="window.location.href='auth.html'">Create Your First QR Code</button>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="footer-container">
+      <div>
+        <div class="logo">QR Studio</div>
+        <p style="color: #adb5bd; margin-top: 16px;">Create beautiful QR codes instantly</p>
+      </div>
+      <div>
+        <h4>Product</h4>
+        <p><a href="#" style="color: #adb5bd; text-decoration: none;">Features</a></p>
+        <p><a href="#" style="color: #adb5bd; text-decoration: none;">Pricing</a></p>
+      </div>
+      <div>
+        <h4>Company</h4>
+        <p><a href="#" style="color: #adb5bd; text-decoration: none;">About</a></p>
+        <p><a href="#" style="color: #adb5bd; text-decoration: none;">Contact</a></p>
+      </div>
+      <div>
+        <h4>Legal</h4>
+        <p><a href="#" style="color: #adb5bd; text-decoration: none;">Privacy</a></p>
+        <p><a href="#" style="color: #adb5bd; text-decoration: none;">Terms</a></p>
+      </div>
+    </div>
+    <div style="text-align: center; margin-top: 40px; padding-top: 30px; border-top: 1px solid rgba(255,255,255,0.1); color: #adb5bd;">
+      Made with ❤️ By Ankita.
+    </div>
+  </footer>
+
+  <div id="videoModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:2000; align-items:center; justify-content:center;">
+    <div style="position:relative; width:80%; max-width:800px;">
+      <button onclick="document.getElementById('videoModal').style.display='none'; document.getElementById('demoVideo').pause()" style="position:absolute; top:-40px; right:0; color:white; background:none; border:none; font-size:24px; cursor:pointer;">✕ Close</button>
+      <video id="demoVideo" controls style="width:100%; border-radius:12px; box-shadow:0 20px 50px rgba(0,0,0,0.5);">
+        <source src="Video_Ready_After_Intro_Page_Request.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+      </video>
+    </div>
+  </div>
+
+</body>
+</html>
